@@ -1,11 +1,22 @@
 class Tile
-  attr_reader :board, :value
+  POS_NEIGHBORS = [
+    [1, 1],
+    [0 , 1],
+    [-1, 1],
+    [-1, 0],
+    [-1, -1],
+    [0, -1],
+    [1, -1],
+    [1, 0]
+  ]
+  attr_reader :board, :value :position
 
-  def initialize(board)
+  def initialize(board, position)
     @board = board
     @value = :empty
     @revealed = false
     @flagged = false
+    @position = position
   end
 
   def revealed?
@@ -28,8 +39,24 @@ class Tile
     @value = :bomb
   end
 
-  def bomb?
+  def bombed?
     self.value == :bomb
+  end
+
+  def neighbors
+    x, y = position
+    pos_neighbors = POS_NEIGHBORS.map { |pos| [x + pos[0], y + pos[1]] }
+    pos_neigbors.reject { |pos| board[pos].nil? }
+  end
+
+  def neighbor_bomb_count
+    bomb_count = 0
+    neighbors.each {|neighbor| bomb_count += 1 if neighbor.bombed?}
+    bomb_count
+  end
+
+  def set_bomb_count
+    @value = neighbor_bomb_count
   end
 
 end
