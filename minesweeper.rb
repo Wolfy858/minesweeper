@@ -65,6 +65,7 @@ class Tile
   end
 
   def to_s
+    return "_" unless revealed
     self.bombed? ? "B" : value.to_s
   end
 
