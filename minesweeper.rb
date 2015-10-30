@@ -65,7 +65,8 @@ class Tile
   end
 
   def to_s
-    return "_" unless revealed
+    return "F" if flagged?
+    return "_" unless revealed?
     self.bombed? ? "B" : value.to_s
   end
 
@@ -132,7 +133,81 @@ class Board
       puts print_row.join(" ")
     end
   end
+
+  def won?
+    grid.flatten.all? do |tile|
+      tile.bombed? || tile.revealed?
+    end
+  end
+
+  def valid_position?(position)
+    !self[*position].revealed?
+  end
 end
 
-b = Board.new
-b.display
+class Game
+  attr_reader :board
+
+  def initialize
+    @board = Board.new
+  end
+
+  def play
+    until board.won?
+      prompt
+    end
+    puts "You win!"
+  end
+
+  def prompt
+    board.display
+    puts "Flag (1) or reveal (2) a tile:"
+    option = gets.chomp
+    option = gets.chomp until valid_option?(option)
+    puts "Input a position (x,y):"
+    position = gets.chomp
+    position = gets.chomp until valid_position?(position)
+
+    case option
+    when "1"
+      prompt_position
+    when "2"
+    end
+  end
+
+  def valid_option?(usr_input)
+    if ["1", "2"].include?(usr_input)
+      true
+    else
+      puts "Please enter either 1 or 2"
+      false
+    end
+  end
+
+  def valid_position?(usr_input)
+    x, y = parse_position(usr_input)
+    if x.between?(0, 8) && y.between?(0, 8)
+        if board.valid_position?(position) # checks if tile is unexplored
+          true
+        else
+          puts "Please enter position of unexplored tile (x,y)"
+          false
+        end
+      else
+        puts "Please enter valid position (x,y)"
+        false
+      end
+    end
+  end
+
+  def parse_position(usr_input)
+    usr_input.split(",").map(&:to_i)
+  end
+end
+
+
+#b = Board.new
+#b.display
+
+g = Game.new
+g.prompt
