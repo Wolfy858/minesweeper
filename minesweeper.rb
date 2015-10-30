@@ -9,7 +9,7 @@ class Tile
     [1, -1],
     [1, 0]
   ]
-  attr_reader :board, :value :position
+  attr_reader :board, :value, :position
 
   def initialize(board, position)
     @board = board
@@ -59,6 +59,10 @@ class Tile
     @value = neighbor_bomb_count
   end
 
+  def to_s
+    self.bombed? ? "B" : value.to_s
+  end
+
 end
 
 class Board
@@ -66,15 +70,20 @@ class Board
 
   def initialize
     @grid = Array.new(9) { Array.new(9) }
+    # # p grid
     initialize_tiles
-    populate_bombs(10)
-    populate_remaining_tiles
+    p @grid
+    #populate_bombs(10)
+    #populate_remaining_tiles
   end
-
+  #
   def initialize_tiles
     grid.each_with_index do |row, i|
-      row.each_index do |j|
-        @grid[i, j] = Tile.new(self, [i, j])
+      row.each_with_index do |_, j|
+        # p "#{i}, #{j}"
+        self[i,j] = Tile.new(self, [i, j])
+        p self[i, j]
+        #p grid[i, j]
       end
     end
   end
@@ -85,8 +94,9 @@ class Board
 
     until populated_bombs == n_bombs
       pos_position = [pos_indices.sample, pos_indices.sample]
-      unless grid[pos_position].bombed?
-        grid[pos_position].set_bomb
+      p grid[*pos_position]
+      unless grid[*pos_position].bombed?
+        grid[*pos_position].set_bomb
         populated_bombs += 1
       end
     end
@@ -97,12 +107,30 @@ class Board
       row.each_with_index do |tile, j|
         tile.set_bomb_count unless tile.bombed?
       end
-
-  def [](row, col)
-    grid[row][col]
+    end
   end
 
-  def []=([row, col], value)
-    grid[row][col] = value
+  # def [](row, col)
+  #   grid[row][col]
+  # end
+  def [](row, col)
+    @grid[row][col]
+  end
+
+  def []=(row, col, value)
+    @grid[row][col] = value
+  end
+
+  def display
+    grid.each do |row|
+      print_row = []
+      row.each do |tile|
+        print_row << tile.to_s
+      end
+      puts print_row.join(" ")
+    end
   end
 end
+
+b = Board.new
+#b.display
