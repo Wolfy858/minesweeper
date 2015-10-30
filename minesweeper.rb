@@ -70,9 +70,8 @@ class Board
 
   def initialize
     @grid = Array.new(9) { Array.new(9) }
-    # # p grid
     initialize_tiles
-    p @grid
+    display
     #populate_bombs(10)
     #populate_remaining_tiles
   end
@@ -80,10 +79,7 @@ class Board
   def initialize_tiles
     grid.each_with_index do |row, i|
       row.each_with_index do |_, j|
-        # p "#{i}, #{j}"
         self[i,j] = Tile.new(self, [i, j])
-        p self[i, j]
-        #p grid[i, j]
       end
     end
   end
