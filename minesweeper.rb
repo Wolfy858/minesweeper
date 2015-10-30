@@ -43,14 +43,19 @@ class Tile
     self.value == :bomb
   end
 
-  def neighbors
+  def find_neighbors
     x, y = position
     pos_neighbors = POS_NEIGHBORS.map { |pos| [x + pos[0], y + pos[1]] }
-    pos_neigbors.reject { |pos| board[pos].nil? }
+    # p pos_neighbors
+    pos_neighbors = pos_neighbors.select { |pos| pos[0].between?(0,8) && pos[1].between?(0,8)}
+    # p pos_neighbors
+    pos_neighbors.map {|pos| board[*pos]}
   end
 
   def neighbor_bomb_count
     bomb_count = 0
+    neighbors = find_neighbors
+    # p neighbors
     neighbors.each {|neighbor| bomb_count += 1 if neighbor.bombed?}
     bomb_count
   end
