@@ -124,6 +124,10 @@ class Board
     @grid[row][col] = value
   end
 
+  def flag(position)
+    self[*position].flag
+  end
+
   def display
     grid.each do |row|
       print_row = []
@@ -170,7 +174,7 @@ class Game
 
     case option
     when "1"
-      prompt_position
+      board.flag(position)
     when "2"
     end
   end
@@ -187,16 +191,15 @@ class Game
   def valid_position?(usr_input)
     x, y = parse_position(usr_input)
     if x.between?(0, 8) && y.between?(0, 8)
-        if board.valid_position?(position) # checks if tile is unexplored
-          true
-        else
-          puts "Please enter position of unexplored tile (x,y)"
-          false
-        end
+      if board.valid_position?([x, y]) # checks if tile is unexplored
+        true
       else
-        puts "Please enter valid position (x,y)"
+        puts "Please enter position of unexplored tile (x,y)"
         false
       end
+    else
+      puts "Please enter valid position (x,y)"
+      false
     end
   end
 
