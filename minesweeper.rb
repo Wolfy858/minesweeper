@@ -71,9 +71,9 @@ class Board
   def initialize
     @grid = Array.new(9) { Array.new(9) }
     initialize_tiles
-    display
-    #populate_bombs(10)
-    #populate_remaining_tiles
+    # display
+    populate_bombs(10)
+    populate_remaining_tiles
   end
   #
   def initialize_tiles
@@ -89,10 +89,10 @@ class Board
     populated_bombs = 0
 
     until populated_bombs == n_bombs
-      pos_position = [pos_indices.sample, pos_indices.sample]
-      p grid[*pos_position]
-      unless grid[*pos_position].bombed?
-        grid[*pos_position].set_bomb
+      row, column = [pos_indices.sample, pos_indices.sample]
+      # p grid[*pos_position]
+      unless self[row, column].bombed?
+        self[row, column].set_bomb
         populated_bombs += 1
       end
     end
@@ -129,4 +129,4 @@ class Board
 end
 
 b = Board.new
-#b.display
+b.display
