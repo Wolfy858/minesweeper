@@ -13,7 +13,7 @@ class Tile
 
   def initialize(board, position)
     @board = board
-    @value = :empty
+    @value = 0
     @revealed = false
     @flagged = false
     @position = position
@@ -66,7 +66,17 @@ class Board
 
   def initialize
     @grid = Array.new(9) { Array.new(9) }
-    populate_bombs
+    initialize_tiles
+    populate_bombs(10)
+    populate_remaining_tiles
+  end
+
+  def initialize_tiles
+    grid.each_with_index do |row, i|
+      row.each_index do |j|
+        @grid[i, j] = Tile.new(self, [i, j])
+      end
+    end
   end
 
   def populate_bombs(n_bombs)
@@ -75,12 +85,18 @@ class Board
 
     until populated_bombs == n_bombs
       pos_position = [pos_indices.sample, pos_indices.sample]
-      unless grid[pos_position].bomb?
+      unless grid[pos_position].bombed?
         grid[pos_position].set_bomb
         populated_bombs += 1
       end
     end
   end
+
+  def populate_remaining_tiles
+    grid.each_with_index do |row, i|
+      row.each_with_index do |tile, j|
+        tile.set_bomb_count unless tile.bombed?
+      end
 
   def [](row, col)
     grid[row][col]
