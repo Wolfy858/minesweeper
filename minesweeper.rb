@@ -29,6 +29,9 @@ class Tile
 
   def reveal
     @revealed = true
+    find_neighbors.each do |neighbor|
+      neighbor.reveal if neighbor.value == 0
+    end
   end
 
   def flag
@@ -128,6 +131,11 @@ class Board
     self[*position].flag
   end
 
+  def reveal(position)
+    game_over if self[*position].bombed?
+    self[*position].reveal
+  end
+
   def display
     grid.each do |row|
       print_row = []
@@ -176,6 +184,7 @@ class Game
     when "1"
       board.flag(position)
     when "2"
+      board.reveal(position)
     end
   end
 
